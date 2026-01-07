@@ -52,6 +52,17 @@
         .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 13px; font-weight: bold; padding-top: 10px; box-sizing: border-box; color: var(--gold); }
 
         #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
+
+        /* 作者署名样式 */
+        .footer-sign {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(212, 175, 55, 0.6);
+            font-size: 12px;
+            letter-spacing: 1px;
+            z-index: 200;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +91,8 @@
             </div>
         </div>
     </div>
+
+    <div class="footer-sign">dy：小茗同学</div>
 
     <script>
         const ms = ["子","癸","丑","艮","寅","甲","卯","乙","辰","巽","巳","丙","午","丁","未","坤","申","庚","酉","辛","戌","乾","亥","壬"];
@@ -113,7 +126,6 @@
                     disk.style.transform = `rotate(${-h}deg)`;
                     degEl.innerText = Math.round(h) + "°";
 
-                    // 已更新方位数据，包含五行显示
                     const gs = [
                         {n:"坎一·水(正北)·中男", min:337.5, max:22.5},
                         {n:"艮八·土(东北)·少男", min:22.5, max:67.5},
