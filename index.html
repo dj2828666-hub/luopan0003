@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>专业风水罗盘-全信息版</title>
+    <title>专业风水罗盘-明仔专版</title>
     <style>
         :root { 
             --gold: #d4af37; --wood-bg: #1a0505; --red: #ff3b30; 
@@ -12,11 +12,22 @@
         
         html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         #info-box { text-align: center; width: 100%; z-index: 100; margin-bottom: 30px; }
         #degree-val { font-size: 4.5rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
-        #gua-val { font-size: 1.3rem; font-weight: bold; color: var(--gold); background: rgba(211, 175, 55, 0.15); padding: 8px 25px; border-radius: 30px; display: inline-block; margin-top: 5px; }
+        #gua-val { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            color: var(--gold); 
+            background: rgba(211, 175, 55, 0.15); 
+            padding: 8px 20px; 
+            border-radius: 30px; 
+            display: inline-block; 
+            margin-top: 5px;
+            white-space: nowrap;
+        }
 
         .compass-container { position: relative; width: 88vw; height: 88vw; max-width: 420px; max-height: 420px; display: flex; align-items: center; justify-content: center; }
 
@@ -102,15 +113,16 @@
                     disk.style.transform = `rotate(${-h}deg)`;
                     degEl.innerText = Math.round(h) + "°";
 
+                    // 已更新方位数据，包含五行显示
                     const gs = [
-                        {n:"坎一(正北)·中男", min:337.5, max:22.5},
-                        {n:"艮八(东北)·少男", min:22.5, max:67.5},
-                        {n:"震三(正东)·长男", min:67.5, max:112.5},
-                        {n:"巽四(东南)·长女", min:112.5, max:157.5},
-                        {n:"离九(正南)·中女", min:157.5, max:202.5},
-                        {n:"坤二(西南)·母亲", min:202.5, max:247.5},
-                        {n:"兑七(正西)·少女", min:247.5, max:292.5},
-                        {n:"乾六(西北)·父亲", min:292.5, max:337.5}
+                        {n:"坎一·水(正北)·中男", min:337.5, max:22.5},
+                        {n:"艮八·土(东北)·少男", min:22.5, max:67.5},
+                        {n:"震三·木(正东)·长男", min:67.5, max:112.5},
+                        {n:"巽四·木(东南)·长女", min:112.5, max:157.5},
+                        {n:"离九·火(正南)·中女", min:157.5, max:202.5},
+                        {n:"坤二·土(西南)·母亲", min:202.5, max:247.5},
+                        {n:"兑七·金(正西)·少女", min:247.5, max:292.5},
+                        {n:"乾六·金(西北)·父亲", min:292.5, max:337.5}
                     ];
                     
                     let res = "校准中...";
