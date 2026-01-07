@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>专业风水罗盘-全功能版</title>
+    <style>
+        :root { 
+            --gold: #d4af37; --wood-bg: #1a0505; --red: #ff3b30; 
+            --water: #007aff; --wood: #34c759; --earth: #ff9500; --metal: #ffffff;
+        }
+        
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "PingFang SC", sans-serif; }
+
+        /* 顶部信息 */
+        #info-box { position: absolute; top: 8vh; text-align: center; width: 100%; display: none; }
+        #degree-val { font-size: 4.2rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212,175,55,0.6); }
+        #gua-val { font-size: 1.3rem; font-weight: bold; color: var(--gold); background: rgba(211,175,55,0.2); padding: 6px 20px; border-radius: 30px; display: inline-block; }
+
+        /* 罗盘容器 */
+        .compass-outer { position: relative; width: 88vw; height: 88vw; max-width: 420px; max-height: 420px; display: none; align-items: center; justify-content: center; }
+
+        /* 十字线 */
+        .line { position: absolute; background: var(--red); z-index: 60; opacity: 0.9; pointer-events: none; }
+        .h-line { width: 110%; height: 1.2px; }
+        .v-line { width: 1.2px; height: 110%; }
+
+        /* 盘面 */
+        #disk { 
+            width: 100%; height: 100%; border-radius: 50%; 
+            background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); 
+            border: 8px solid var(--gold); position: relative; overflow: hidden;
+            transition: transform 0.05s linear;
+        }
+
+        /* 二十四山刻度 */
+        .m-text {
+            position: absolute; width: 100%; height: 100%; text-align: center;
+            font-size: 13px; font-weight: bold; padding-top: 10px; box-sizing: border-box; color: var(--gold);
+        }
+
+        /* 九宫格 */
+        .nine-grid {
+            position: absolute; top: 22%; left: 22%; width: 56%; height: 56%;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+            border: 1px solid var(--gold); z-index: 10; background: rgba(0,0,0,0.4);
+        }
+        .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .cell b { font-size: 13px; margin-bottom: 2px; color: #fff; }
+        .cell small { font-size: 9px; line-height: 1.1; }
+        
+        /* 五行色 */
+        .c-fire { color: var(--red); } .c-water { color: var(--water); }
+        .c-wood { color: var(--wood); } .c-metal { color: var(--metal); }
+        .c-earth { color: var(--earth); }
+
+        #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; z-index: 100; }
+    </style>
+</head>
+<body>
+
+    <button id="start-btn">开启极准罗盘</button>
+
+    <div id="info-box">
+        <p id="degree-val">0°</p>
+        <span id="gua-val">校准中...</span>
+    </div>
+
+    <div class="compass-outer" id="ui">
+        <div class="line h-line"></div><div class="line v-line"></div>
+        <div id="disk">
+            <div class="m-text" style="transform:rotate(0deg)">子</div>
+            <div class="m-text" style="transform:rotate(15deg)">癸</div>
+            <div class="m-text" style="transform:rotate(30deg)">丑</div>
+            <div class="m-text" style="transform:rotate(45deg)">艮</div>
+            <div class="m-text" style="transform:rotate(60deg)">寅</div>
+            <div class="m-text" style="transform:rotate(75deg)">甲</div>
+            <div class="m-text" style="transform:rotate(90deg)">卯</div>
+            <div class="m-text" style="transform:rotate(105deg)">乙</div>
+            <div class="m-text" style="transform:rotate(120deg)">辰</div>
+            <div class="m-text" style="transform:rotate(135deg)">巽</div>
+            <div class="m-text" style="transform:rotate(150deg)">巳</div>
+            <div class="m-text" style="transform:rotate(165deg)">丙</div>
+            <div class="m-text" style="transform:rotate(180deg)">午</div>
+            <div class="m-text" style="transform:rotate(195deg)">丁</div>
+            <div class="m-text" style="transform:rotate(210deg)">未</div>
+            <div class="m-text" style="transform:rotate(225deg)">坤</div>
+            <div class="m-text" style="transform:rotate(240deg)">申</div>
+            <div class="m-text" style="transform:rotate(255deg)">庚</div>
+            <div class="m-text" style="transform:rotate(270deg)">酉</div>
+            <div class="m-text" style="transform:rotate(285deg)">辛</div>
+            <div class="m-text" style="transform:rotate(300deg)">戌</div>
+            <div class="m-text" style="transform:rotate(315deg)">乾</div>
+            <div class="m-text" style="transform:rotate(330deg)">亥</div>
+            <div class="m-text" style="transform:rotate(345deg)">壬</div>
+
+            <div class="nine-grid">
+                <div class="cell"><b>巽四</b><small class="c-wood">木(长女)</small></div>
+                <div class="cell"><b>离九</b><small class="c-fire">火(中女)</small></div>
+                <div class="cell"><b>坤二</b><small class="c-earth">土(母亲)</small></div>
+                <div class="cell"><b>震三</b><small class="c-wood">木(长男)</small></div>
+                <div class="cell"><b>中宫</b><small class="c-earth">土</small></div>
+                <div class="cell"><b>兑七</b><small class="c-metal">金(少女)</small></div>
+                <div class="cell"><b>艮八</b><small class="c-earth">土(少男)</small></div>
+                <div class="cell"><b>坎一</b><small class="c-water">水(中男)</small></div>
+                <div class="cell"><b>乾六</b><small class="c-metal">金(父亲)</small></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('start-btn');
+        const disk = document.getElementById('disk');
+        const degEl = document.getElementById('degree-val');
+        const guaEl = document.getElementById('gua-val');
+        const ui = document.getElementById('ui');
+        const info = document.getElementById('info-box');
+
+        btn.onclick = () => {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(s => { if(s==='granted') run(); })
+                .catch(e => alert("请开启指南针权限"));
+            } else { run(); }
+        };
+
+        function run() {
+            btn.style.display = 'none';
+            ui.style.display = 'flex';
+            info.style.display = 'block';
+
+            window.addEventListener('deviceorientation', e => {
+                let h = e.webkitCompassHeading;
+                if (h !== undefined) {
+                    disk.style.transform = `rotate(${-h}deg)`;
+                    degEl.innerText = Math.round(h) + "°";
+
+                    const gs = [
+                        {n:"坎一·水(中男)", min:337.5, max:22.5},
+                        {n:"艮八·土(少男)", min:22.5, max:67.5},
+                        {n:"震三·木(长男)", min:67.5, max:112.5},
+                        {n:"巽四·木(长女)", min:112.5, max:157.5},
+                        {n:"离九·火(中女)", min:157.5, max:202.5},
+                        {n:"坤二·土(母亲)", min:202.5, max:247.5},
+                        {n:"兑七·金(少女)", min:247.5, max:292.5},
+                        {n:"乾六·金(父亲)", min:292.5, max:337.5}
+                    ];
+                    
+                    let res = "校准中...";
+                    for (let g of gs) {
+                        if (g.min > g.max) {
+                            if (h >= g.min || h < g.max) { res = g.n; break; }
+                        } else {
+                            if (h >= g.min && h < g.max) { res = g.n; break; }
+                        }
+                    }
+                    guaEl.innerText = res;
+                }
+            }, true);
+        }
+    </script>
+</body>
+</html>
