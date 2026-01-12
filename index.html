@@ -18,15 +18,8 @@
         #info-box { text-align: center; width: 100%; z-index: 100; margin-bottom: 30px; }
         #degree-val { font-size: 4.5rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
         #gua-val { 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            color: var(--gold); 
-            background: rgba(211, 175, 55, 0.15); 
-            padding: 8px 20px; 
-            border-radius: 30px; 
-            display: inline-block; 
-            margin-top: 5px;
-            white-space: nowrap;
+            font-size: 1.1rem; font-weight: bold; color: var(--gold); background: rgba(211, 175, 55, 0.15); 
+            padding: 8px 20px; border-radius: 30px; display: inline-block; margin-top: 5px; white-space: nowrap;
         }
 
         .compass-container { position: relative; width: 88vw; height: 88vw; max-width: 420px; max-height: 420px; display: flex; align-items: center; justify-content: center; }
@@ -35,11 +28,12 @@
         .h-line { width: 112%; height: 1.2px; }
         .v-line { width: 1.2px; height: 112%; }
 
-        /* 初始增加 180度 修正旋转 */
-        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 8px solid var(--gold); box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
+        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 8px solid var(--gold); box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; transition: transform 0.1s linear; overflow: hidden; }
 
         .nine-grid { position: absolute; top: 22%; left: 22%; width: 56%; height: 56%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 10; background: rgba(0,0,0,0.4); }
         .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; }
+        /* 这里的b和small增加了transition确保文字旋转平滑 */
+        .cell b, .cell small { transition: transform 0.1s linear; display: inline-block; }
         .cell b { font-size: 13px; margin-bottom: 2px; color: #fff; }
         .cell small { font-size: 9px; line-height: 1.1; text-align: center; }
         
@@ -50,10 +44,9 @@
         .earth { color: var(--earth-yellow); }
 
         .m-layer { position: absolute; width: 100%; height: 100%; z-index: 5; }
-        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 13px; font-weight: bold; padding-top: 10px; box-sizing: border-box; color: var(--gold); }
+        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 13px; font-weight: bold; padding-top: 10px; box-sizing: border-box; color: var(--gold); transition: transform 0.1s linear; }
 
         #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
-
         .footer-sign { position: fixed; bottom: 20px; right: 20px; color: rgba(212, 175, 55, 0.6); font-size: 12px; letter-spacing: 1px; z-index: 200; }
     </style>
 </head>
@@ -71,15 +64,15 @@
         <div id="disk">
             <div id="mountains-box" class="m-layer"></div>
             <div class="nine-grid">
-                <div class="cell"><b class="wood">巽四</b><small class="wood">木(长女)</small></div>
-                <div class="cell"><b class="fire">离九</b><small class="fire">火(中女)</small></div>
-                <div class="cell"><b class="earth">坤二</b><small class="earth">土(母亲)</small></div>
-                <div class="cell"><b class="wood">震三</b><small class="wood">木(长男)</small></div>
-                <div class="cell"><b class="earth">中宫</b><small class="earth">土</small></div>
-                <div class="cell"><b class="metal">兑七</b><small class="metal">金(少女)</small></div>
                 <div class="cell"><b class="earth">艮八</b><small class="earth">土(少男)</small></div>
                 <div class="cell"><b class="water">坎一</b><small class="water">水(中男)</small></div>
                 <div class="cell"><b class="metal">乾六</b><small class="metal">金(父亲)</small></div>
+                <div class="cell"><b class="wood">震三</b><small class="wood">木(长男)</small></div>
+                <div class="cell"><b class="earth">中宫</b><small class="earth">土</small></div>
+                <div class="cell"><b class="metal">兑七</b><small class="metal">金(少女)</small></div>
+                <div class="cell"><b class="wood">巽四</b><small class="wood">木(长女)</small></div>
+                <div class="cell"><b class="fire">离九</b><small class="fire">火(中女)</small></div>
+                <div class="cell"><b class="earth">坤二</b><small class="earth">土(母亲)</small></div>
             </div>
         </div>
     </div>
@@ -89,9 +82,12 @@
     <script>
         const ms = ["子","癸","丑","艮","寅","甲","卯","乙","辰","巽","巳","丙","午","丁","未","坤","申","庚","酉","辛","戌","乾","亥","壬"];
         const box = document.getElementById('mountains-box');
+        // 初始化二十四山
         ms.forEach((t, i) => {
             const d = document.createElement('div');
             d.className = 'm-text'; d.innerText = t;
+            // 记录原始位置旋转度
+            d.dataset.origDeg = i * 15;
             d.style.transform = `rotate(${i * 15}deg)`;
             box.appendChild(d);
         });
@@ -108,10 +104,20 @@
         };
 
         function updateUI(h) {
-            // 核心逻辑修改：增加 180 度偏移，实现上南下北对齐
-            let rotation = -h + 180;
-            disk.style.transform = `rotate(${rotation}deg)`;
+            // 1. 旋转盘面（改为北向模式，直接取负角度）
+            disk.style.transform = `rotate(${-h}deg)`;
             degEl.innerText = Math.round(h) + "°";
+
+            // 2. 文字补偿：让文字转回来，永远水平
+            // 九宫格文字补偿
+            document.querySelectorAll('.cell b, .cell small').forEach(el => {
+                el.style.transform = `rotate(${h}deg)`;
+            });
+            // 二十四山文字补偿
+            document.querySelectorAll('.m-text').forEach(el => {
+                const orig = parseFloat(el.dataset.origDeg);
+                el.style.transform = `rotate(${orig}deg) rotate(${h}deg)`;
+            });
 
             const gs = [
                 {n:"坎一·水(正北)·中男", min:337.5, max:22.5},
@@ -140,19 +146,17 @@
             document.getElementById('ui').style.display = 'flex';
             document.getElementById('info-box').style.display = 'block';
 
-            // 兼容安卓与iOS的传感器监听
+            // 优先监听安卓地理北极
             if ('ondeviceorientationabsolute' in window) {
                 window.addEventListener('deviceorientationabsolute', e => {
-                    let h = e.alpha ? 360 - e.alpha : 0; // 安卓地理北极
+                    let h = 360 - e.alpha; 
                     updateUI(h);
                 }, true);
-            } else if ('ondeviceorientation' in window) {
+            } else {
                 window.addEventListener('deviceorientation', e => {
                     let h = e.webkitCompassHeading || (e.alpha ? 360 - e.alpha : 0);
                     updateUI(h);
                 }, true);
-            } else {
-                alert("您的浏览器不支持传感器，请使用HTTPS环境访问");
             }
         }
     </script>
