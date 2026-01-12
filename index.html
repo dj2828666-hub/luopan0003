@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>专业风水罗盘-六十四卦版</title>
+    <title>专业风水罗盘-六十四卦全息版</title>
     <style>
         :root { 
-            --gold: #d4af37; --red: #ff3b30; 
+            --gold: #d4af37; --red: #ff3b30; --line-color: rgba(212, 175, 55, 0.3);
         }
         
         html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; 
@@ -18,54 +18,64 @@
         #degree-val { font-size: 3.5rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
         #gua-val { font-size: 1rem; font-weight: bold; color: var(--gold); background: rgba(211, 175, 55, 0.15); padding: 5px 15px; border-radius: 20px; display: inline-block; }
 
-        .compass-container { position: relative; width: 96vw; height: 96vw; max-width: 500px; max-height: 500px; display: flex; align-items: center; justify-content: center; }
+        .compass-container { position: relative; width: 95vw; height: 95vw; max-width: 500px; max-height: 500px; display: flex; align-items: center; justify-content: center; }
 
-        /* 十字架 */
-        .line { position: absolute; background: var(--red); z-index: 50; opacity: 0.7; pointer-events: none; }
-        .h-line { width: 100%; height: 1px; }
-        .v-line { width: 1px; height: 100%; }
+        /* 十字架 - 严格限制在圆盘内 */
+        .line { position: absolute; background: var(--red); z-index: 80; opacity: 0.8; pointer-events: none; }
+        .h-line { width: 100%; height: 1.2px; }
+        .v-line { width: 1.2px; height: 100%; }
 
-        /* 顶部指针 */
+        /* 顶部红色指向箭头 */
         .top-arrow {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid var(--red); z-index: 60;
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid var(--red); z-index: 90;
         }
 
-        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #2a0808 0%, #000 100%); border: 6px solid var(--gold); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
+        /* 旋转盘面 */
+        #disk { 
+            width: 100%; height: 100%; border-radius: 50%; 
+            background: radial-gradient(circle, #2a0808 0%, #050000 100%); 
+            border: 6px solid var(--gold); 
+            position: relative; transition: transform 0.1s ease-out; 
+            overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,1);
+        }
 
-        /* 六十四卦层样式 */
-        .g64-layer { position: absolute; width: 100%; height: 100%; z-index: 4; }
-        .g64-item { position: absolute; width: 100%; height: 100%; text-align: center; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
-        
-        /* 卦象符号 */
-        .g-symbol { font-size: 8px; padding-top: 5px; color: rgba(255,255,255,0.8); }
-        /* 卦名文字 */
-        .g-name { font-size: 7px; color: var(--gold); transform: scale(0.8); margin-top: -2px; }
+        /* 第一层：最外圈六十四卦 (占最外边缘) */
+        .g64-layer { position: absolute; width: 100%; height: 100%; z-index: 10; }
+        .g64-item { position: absolute; width: 100%; height: 100%; text-align: center; box-sizing: border-box; }
+        .g-content { display: inline-block; margin-top: 4px; line-height: 1; }
+        .g-symbol { font-size: 7px; color: #fff; display: block; letter-spacing: -1px; transform: scaleX(0.8); }
+        .g-name { font-size: 8px; color: var(--gold); display: block; transform: scale(0.85); margin-top: 1px; }
 
-        /* 八方位层 */
-        .d-layer { position: absolute; width: 100%; height: 100%; z-index: 6; }
-        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 14px; font-weight: bold; padding-top: 22px; color: #fff; text-shadow: 0 0 3px #000; }
+        /* 第二层：八方位层 */
+        .d-layer { position: absolute; width: 100%; height: 100%; z-index: 20; }
+        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 15px; font-weight: 900; padding-top: 25px; color: #fff; text-shadow: 0 0 5px #000; }
 
-        /* 二十四山层 */
-        .m-layer { position: absolute; width: 100%; height: 100%; z-index: 5; }
-        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 11px; font-weight: bold; padding-top: 45px; color: var(--gold); }
+        /* 第三层：二十四山层 */
+        .m-layer { position: absolute; width: 100%; height: 100%; z-index: 15; }
+        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 12px; font-weight: bold; padding-top: 50px; color: var(--gold); }
 
-        /* 九宫格 */
-        .nine-grid { position: absolute; top: 28%; left: 28%; width: 44%; height: 44%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 10; background: rgba(0,0,0,0.5); }
-        .cell { border: 0.5px solid rgba(212,175,55,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .cell b { font-size: 10px; color: #fff; }
-        .cell small { font-size: 7px; color: #ccc; transform: scale(0.9); }
+        /* 第四层：中心九宫格 */
+        .nine-grid { 
+            position: absolute; top: 30%; left: 30%; width: 40%; height: 40%; 
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); 
+            border: 1px solid var(--gold); z-index: 30; background: rgba(0,0,0,0.6); 
+        }
+        .cell { border: 0.5px solid var(--line-color); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .cell b { font-size: 11px; color: #fff; }
+        .cell small { font-size: 8px; color: #aaa; transform: scale(0.9); }
 
-        #start-btn { padding: 15px 40px; font-size: 1.2rem; background: var(--gold); color: #000; border-radius: 30px; font-weight: bold; border: none; cursor: pointer; }
+        #start-btn { padding: 18px 45px; font-size: 1.3rem; background: var(--gold); color: #000; border-radius: 40px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
+        .footer-sign { position: fixed; bottom: 15px; right: 15px; color: rgba(212, 175, 55, 0.5); font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <button id="start-btn">开启专业罗盘</button>
+    <button id="start-btn">开启极准罗盘</button>
 
     <div id="info-box" style="display:none;">
         <p id="degree-val">0°</p>
-        <span id="gua-val">校准中...</span>
+        <span id="gua-val">系统初始化...</span>
     </div>
 
     <div class="compass-container" id="ui" style="display:none;">
@@ -90,26 +100,26 @@
         </div>
     </div>
 
+    <div class="footer-sign">专业风水罗盘 v2.0</div>
+
     <script>
-        // 六十四卦简表（仅提取部分展示效果，实际应用需完整映射）
+        // 1. 初始化六十四卦 (完整版排列建议使用更准确的数据，这里先展示视觉效果)
         const g64Names = [
             "坤", "复", "颐", "屯", "益", "震", "噬嗑", "随", "无妄", "明夷", "贲", "既济", "家人", "丰", "革", "同人",
             "临", "损", "节", "中孚", "归妹", "睽", "兑", "履", "泰", "大畜", "需", "小畜", "大壮", "大有", "夬", "乾",
             "姤", "大过", "鼎", "恒", "巽", "井", "蛊", "升", "讼", "困", "未济", "解", "涣", "坎", "蒙", "师",
-            "遁", "咸", "旅", "小过", "渐", "蹇", "艮", "谦", "否", "萃", "晋", "豫", "观", "比", "剥", "坤"
+            "遁", "咸", "旅", "小过", "渐", "蹇", "艮", "谦", "否", "萃", "晋", "豫", "观", "比", "剥", "剥"
         ];
-        
-        // 渲染 64 卦
         const g64Box = document.getElementById('g64-box');
         g64Names.forEach((name, i) => {
-            const item = document.createElement('div');
-            item.className = 'g64-item';
-            item.style.transform = `rotate(${i * 5.625}deg)`;
-            item.innerHTML = `<span class="g-symbol">¦¦¦</span><span class="g-name">${name}</span>`;
-            g64Box.appendChild(item);
+            const wrap = document.createElement('div');
+            wrap.className = 'g64-item';
+            wrap.style.transform = `rotate(${i * 5.625}deg)`;
+            wrap.innerHTML = `<div class="g-content"><span class="g-symbol">¦¦¦</span><span class="g-name">${name}</span></div>`;
+            g64Box.appendChild(wrap);
         });
 
-        // 八方位
+        // 2. 初始化八方位
         const dirs = ["南", "西南", "西", "西北", "北", "东北", "东", "东南"];
         const dirBox = document.getElementById('dir-box');
         dirs.forEach((t, i) => {
@@ -119,7 +129,7 @@
             dirBox.appendChild(d);
         });
 
-        // 二十四山
+        // 3. 初始化二十四山
         const ms = ["午","丁","未","坤","申","庚","酉","辛","戌","乾","亥","壬","子","癸","丑","艮","寅","甲","卯","乙","辰","巽","巳","丙"];
         const mtBox = document.getElementById('mountains-box');
         ms.forEach((t, i) => {
@@ -132,6 +142,7 @@
         const btn = document.getElementById('start-btn');
         const disk = document.getElementById('disk');
         const degEl = document.getElementById('degree-val');
+        const guaEl = document.getElementById('gua-val');
 
         btn.onclick = () => {
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -139,15 +150,30 @@
             } else { run(); }
         };
 
+        function updateUI(h) {
+            disk.style.transform = `rotate(${-h + 180}deg)`;
+            degEl.innerText = Math.round(h) + "°";
+            
+            // 简单的八宫判定显示
+            const gs = ["正北 坎宫", "东北 艮宫", "正东 震宫", "东南 巽宫", "正南 离宫", "西南 坤宫", "正西 兑宫", "西北 乾宫"];
+            let idx = Math.floor(((h + 22.5) % 360) / 45);
+            const map = [4, 5, 6, 7, 0, 1, 2, 3]; // 修正索引对应
+            guaEl.innerText = gs[map[idx]];
+        }
+
         function run() {
             btn.style.display = 'none';
             document.getElementById('ui').style.display = 'flex';
             document.getElementById('info-box').style.display = 'block';
-            window.addEventListener('deviceorientationabsolute', e => {
-                let h = e.alpha ? 360 - e.alpha : 0;
-                disk.style.transform = `rotate(${-h + 180}deg)`;
-                degEl.innerText = Math.round(h) + "°";
-            }, true);
+            
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', e => updateUI(e.alpha ? 360 - e.alpha : 0), true);
+            } else {
+                window.addEventListener('deviceorientation', e => {
+                    let h = e.webkitCompassHeading || (e.alpha ? 360 - e.alpha : 0);
+                    updateUI(h);
+                }, true);
+            }
         }
     </script>
 </body>
