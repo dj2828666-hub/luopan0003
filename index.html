@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>专业风水罗盘-明仔专版</title>
+    <title>专业风水罗盘-全信息版</title>
     <style>
         :root { 
             --gold: #d4af37; --wood-bg: #1a0505; --red: #ff3b30; 
@@ -35,7 +35,8 @@
         .h-line { width: 112%; height: 1.2px; }
         .v-line { width: 1.2px; height: 112%; }
 
-        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 8px solid var(--gold); box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; transition: transform 0.05s linear; overflow: hidden; }
+        /* 初始增加 180度 修正旋转 */
+        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 8px solid var(--gold); box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
 
         .nine-grid { position: absolute; top: 22%; left: 22%; width: 56%; height: 56%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 10; background: rgba(0,0,0,0.4); }
         .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; }
@@ -53,16 +54,7 @@
 
         #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
 
-        /* 作者署名样式 */
-        .footer-sign {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(212, 175, 55, 0.6);
-            font-size: 12px;
-            letter-spacing: 1px;
-            z-index: 200;
-        }
+        .footer-sign { position: fixed; bottom: 20px; right: 20px; color: rgba(212, 175, 55, 0.6); font-size: 12px; letter-spacing: 1px; z-index: 200; }
     </style>
 </head>
 <body>
@@ -115,39 +107,53 @@
             } else { run(); }
         };
 
+        function updateUI(h) {
+            // 核心逻辑修改：增加 180 度偏移，实现上南下北对齐
+            let rotation = -h + 180;
+            disk.style.transform = `rotate(${rotation}deg)`;
+            degEl.innerText = Math.round(h) + "°";
+
+            const gs = [
+                {n:"坎一·水(正北)·中男", min:337.5, max:22.5},
+                {n:"艮八·土(东北)·少男", min:22.5, max:67.5},
+                {n:"震三·木(正东)·长男", min:67.5, max:112.5},
+                {n:"巽四·木(东南)·长女", min:112.5, max:157.5},
+                {n:"离九·火(正南)·中女", min:157.5, max:202.5},
+                {n:"坤二·土(西南)·母亲", min:202.5, max:247.5},
+                {n:"兑七·金(正西)·少女", min:247.5, max:292.5},
+                {n:"乾六·金(西北)·父亲", min:292.5, max:337.5}
+            ];
+            
+            let res = "校准中...";
+            for (let g of gs) {
+                if (g.min > g.max) {
+                    if (h >= g.min || h < g.max) { res = g.n; break; }
+                } else {
+                    if (h >= g.min && h < g.max) { res = g.n; break; }
+                }
+            }
+            guaEl.innerText = res;
+        }
+
         function run() {
             btn.style.display = 'none';
             document.getElementById('ui').style.display = 'flex';
             document.getElementById('info-box').style.display = 'block';
 
-            window.addEventListener('deviceorientation', e => {
-                let h = e.webkitCompassHeading; 
-                if (h !== undefined) {
-                    disk.style.transform = `rotate(${-h}deg)`;
-                    degEl.innerText = Math.round(h) + "°";
-
-                    const gs = [
-                        {n:"坎一·水(正北)·中男", min:337.5, max:22.5},
-                        {n:"艮八·土(东北)·少男", min:22.5, max:67.5},
-                        {n:"震三·木(正东)·长男", min:67.5, max:112.5},
-                        {n:"巽四·木(东南)·长女", min:112.5, max:157.5},
-                        {n:"离九·火(正南)·中女", min:157.5, max:202.5},
-                        {n:"坤二·土(西南)·母亲", min:202.5, max:247.5},
-                        {n:"兑七·金(正西)·少女", min:247.5, max:292.5},
-                        {n:"乾六·金(西北)·父亲", min:292.5, max:337.5}
-                    ];
-                    
-                    let res = "校准中...";
-                    for (let g of gs) {
-                        if (g.min > g.max) {
-                            if (h >= g.min || h < g.max) { res = g.n; break; }
-                        } else {
-                            if (h >= g.min && h < g.max) { res = g.n; break; }
-                        }
-                    }
-                    guaEl.innerText = res;
-                }
-            }, true);
+            // 兼容安卓与iOS的传感器监听
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', e => {
+                    let h = e.alpha ? 360 - e.alpha : 0; // 安卓地理北极
+                    updateUI(h);
+                }, true);
+            } else if ('ondeviceorientation' in window) {
+                window.addEventListener('deviceorientation', e => {
+                    let h = e.webkitCompassHeading || (e.alpha ? 360 - e.alpha : 0);
+                    updateUI(h);
+                }, true);
+            } else {
+                alert("您的浏览器不支持传感器，请使用HTTPS环境访问");
+            }
         }
     </script>
 </body>
