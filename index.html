@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>专业风水罗盘-360°精细版</title>
+    <title>专业风水罗盘-全信息版</title>
     <style>
         :root { 
             --gold: #d4af37; --wood-bg: #1a0505; --red: #ff3b30; 
@@ -15,55 +15,63 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        #info-box { text-align: center; width: 100%; z-index: 100; margin-bottom: 20px; }
+        #info-box { text-align: center; width: 100%; z-index: 100; margin-bottom: 30px; }
         #degree-val { font-size: 4.5rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
         #gua-val { 
-            font-size: 1.1rem; font-weight: bold; color: var(--gold); 
-            background: rgba(211, 175, 55, 0.15); padding: 8px 20px; border-radius: 30px; 
-            display: inline-block; margin-top: 5px;
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            color: var(--gold); 
+            background: rgba(211, 175, 55, 0.15); 
+            padding: 8px 20px; 
+            border-radius: 30px; 
+            display: inline-block; 
+            margin-top: 5px;
+            white-space: nowrap;
         }
 
         .compass-container { position: relative; width: 92vw; height: 92vw; max-width: 460px; max-height: 460px; display: flex; align-items: center; justify-content: center; }
 
-        /* 红色十字架 */
+        /* 红色十字架 - 现在长度限制在容器内部 */
         .line { position: absolute; background: var(--red); z-index: 50; opacity: 0.8; pointer-events: none; }
-        .h-line { width: 100%; height: 1.5px; }
-        .v-line { width: 1.5px; height: 100%; }
+        .h-line { width: 100%; height: 1.5px; } /* 宽度改为100% */
+        .v-line { width: 1.5px; height: 100%; } /* 高度改为100% */
 
+        /* 顶部红色小箭头 */
         .top-arrow {
-            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid var(--red);
+            position: absolute;
+            top: -20px; /* 位于圆盘上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 15px solid var(--red);
             z-index: 60;
         }
 
-        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 6px solid var(--gold); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
+        #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 8px solid var(--gold); box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
 
-        /* 360度刻度层 - 使用百分比定位确保GitHub访问时渲染正常 */
-        .scale-layer { position: absolute; width: 100%; height: 100%; z-index: 4; top:0; left:0; }
-        .tick { 
-            position: absolute; top: 0; left: 50%; width: 1px; height: 8px; 
-            background: rgba(212, 175, 55, 0.4); 
-            transform-origin: 0 46vw; /* 这里的46vw对应容器宽度的一半 */
-        }
-        @media (min-width: 460px) { .tick { transform-origin: 0 230px; } } /* 对应max-width的一半 */
-
-        .tick.major { height: 16px; width: 1.5px; background: var(--gold); }
-        .tick.mid { height: 12px; background: rgba(212, 175, 55, 0.7); }
-
-        /* 文字层 */
-        .d-layer { position: absolute; width: 100%; height: 100%; z-index: 10; }
-        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 16px; font-weight: 900; padding-top: 22px; color: #fff; text-shadow: 0 0 5px #000; }
-
-        .m-layer { position: absolute; width: 100%; height: 100%; z-index: 8; }
-        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 12px; font-weight: bold; padding-top: 50px; color: var(--gold); }
-
-        .nine-grid { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 20; background: rgba(0,0,0,0.5); }
-        .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .cell b { font-size: 12px; color: #fff; }
-        .cell small { font-size: 8px; color: #ccc; }
+        .nine-grid { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 10; background: rgba(0,0,0,0.4); }
+        .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; }
+        .cell b { font-size: 12px; margin-bottom: 2px; color: #fff; }
+        .cell small { font-size: 8px; line-height: 1.1; text-align: center; }
         
+        .fire { color: var(--red); }
+        .water { color: var(--water-blue); }
+        .wood { color: var(--wood-green); }
+        .metal { color: var(--metal-white); }
+        .earth { color: var(--earth-yellow); }
+
+        .d-layer { position: absolute; width: 100%; height: 100%; z-index: 6; }
+        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 16px; font-weight: 900; padding-top: 10px; box-sizing: border-box; color: #fff; text-shadow: 0 0 5px var(--gold); }
+
+        .m-layer { position: absolute; width: 100%; height: 100%; z-index: 5; }
+        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 12px; font-weight: bold; padding-top: 40px; box-sizing: border-box; color: var(--gold); }
+
         #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
-        .footer-sign { position: fixed; bottom: 20px; right: 20px; color: rgba(212, 175, 55, 0.6); font-size: 12px; }
+
+        .footer-sign { position: fixed; bottom: 20px; right: 20px; color: rgba(212, 175, 55, 0.6); font-size: 12px; letter-spacing: 1px; z-index: 200; }
     </style>
 </head>
 <body>
@@ -81,19 +89,18 @@
         <div class="line v-line"></div>
         
         <div id="disk">
-            <div id="scale-box" class="scale-layer"></div>
             <div id="dir-box" class="d-layer"></div>
             <div id="mountains-box" class="m-layer"></div>
             <div class="nine-grid">
-                <div class="cell"><b class="wood">巽四</b><small>木(长女)</small></div>
-                <div class="cell"><b class="fire">离九</b><small>火(中女)</small></div>
-                <div class="cell"><b class="earth">坤二</b><small>土(母亲)</small></div>
-                <div class="cell"><b class="wood">震三</b><small>木(长男)</small></div>
-                <div class="cell"><b class="earth">中宫</b><small>土</small></div>
-                <div class="cell"><b class="metal">兑七</b><small>金(少女)</small></div>
-                <div class="cell"><b class="earth">艮八</b><small>土(少男)</small></div>
-                <div class="cell"><b class="water">坎一</b><small>水(中男)</small></div>
-                <div class="cell"><b class="metal">乾六</b><small>金(父亲)</small></div>
+                <div class="cell"><b class="wood">巽四</b><small class="wood">木(长女)</small></div>
+                <div class="cell"><b class="fire">离九</b><small class="fire">火(中女)</small></div>
+                <div class="cell"><b class="earth">坤二</b><small class="earth">土(母亲)</small></div>
+                <div class="cell"><b class="wood">震三</b><small class="wood">木(长男)</small></div>
+                <div class="cell"><b class="earth">中宫</b><small class="earth">土</small></div>
+                <div class="cell"><b class="metal">兑七</b><small class="metal">金(少女)</small></div>
+                <div class="cell"><b class="earth">艮八</b><small class="earth">土(少男)</small></div>
+                <div class="cell"><b class="water">坎一</b><small class="water">水(中男)</small></div>
+                <div class="cell"><b class="metal">乾六</b><small class="metal">金(父亲)</small></div>
             </div>
         </div>
     </div>
@@ -101,18 +108,6 @@
     <div class="footer-sign">dy：小茗同学</div>
 
     <script>
-        // 动态生成刻度
-        const scaleBox = document.getElementById('scale-box');
-        for (let i = 0; i < 360; i++) {
-            const tick = document.createElement('div');
-            tick.className = 'tick';
-            if (i % 10 === 0) tick.classList.add('major');
-            else if (i % 2 === 0) tick.classList.add('mid');
-            tick.style.transform = `rotate(${i}deg)`;
-            scaleBox.appendChild(tick);
-        }
-
-        // 初始化文字
         const dirs = ["南", "西南", "西", "西北", "北", "东北", "东", "东南"];
         const dirBox = document.getElementById('dir-box');
         dirs.forEach((t, i) => {
@@ -185,7 +180,7 @@
                     updateUI(h);
                 }, true);
             } else {
-                alert("请在手机浏览器（建议Safari/Chrome）中打开，并确保使用HTTPS链接");
+                alert("您的浏览器不支持传感器，请使用HTTPS环境访问");
             }
         }
     </script>
