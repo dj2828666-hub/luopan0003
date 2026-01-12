@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>专业风水罗盘-360°全信息精细版</title>
+    <title>专业风水罗盘-360°精细版</title>
     <style>
         :root { 
             --gold: #d4af37; --wood-bg: #1a0505; --red: #ff3b30; 
@@ -16,64 +16,59 @@
         }
 
         #info-box { text-align: center; width: 100%; z-index: 100; margin-bottom: 20px; }
-        #degree-val { font-size: 4rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
+        #degree-val { font-size: 4.5rem; font-weight: 900; color: #fff; margin: 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
         #gua-val { 
-            font-size: 1rem; 
-            font-weight: bold; 
-            color: var(--gold); 
-            background: rgba(211, 175, 55, 0.15); 
-            padding: 6px 18px; 
-            border-radius: 30px; 
-            display: inline-block; 
-            margin-top: 5px;
+            font-size: 1.1rem; font-weight: bold; color: var(--gold); 
+            background: rgba(211, 175, 55, 0.15); padding: 8px 20px; border-radius: 30px; 
+            display: inline-block; margin-top: 5px;
         }
 
-        .compass-container { position: relative; width: 95vw; height: 95vw; max-width: 500px; max-height: 500px; display: flex; align-items: center; justify-content: center; }
+        .compass-container { position: relative; width: 92vw; height: 92vw; max-width: 460px; max-height: 460px; display: flex; align-items: center; justify-content: center; }
 
-        .line { position: absolute; background: var(--red); z-index: 50; opacity: 0.7; pointer-events: none; }
-        .h-line { width: 100%; height: 1px; }
-        .v-line { width: 1px; height: 100%; }
+        /* 红色十字架 */
+        .line { position: absolute; background: var(--red); z-index: 50; opacity: 0.8; pointer-events: none; }
+        .h-line { width: 100%; height: 1.5px; }
+        .v-line { width: 1.5px; height: 100%; }
 
         .top-arrow {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid var(--red);
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid var(--red);
             z-index: 60;
         }
 
         #disk { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #3d1010 0%, #0a0000 100%); border: 6px solid var(--gold); position: relative; transition: transform 0.1s ease-out; overflow: hidden; }
 
-        /* 360度刻度样式 */
-        .scale-layer { position: absolute; width: 100%; height: 100%; z-index: 4; }
-        .scale-line { position: absolute; top: 0; left: 50%; width: 1px; height: 8px; background: rgba(212, 175, 55, 0.3); transform-origin: 50% 250px; /* 这里的250px会在JS中动态修正 */ }
-        .scale-line.major { height: 15px; width: 1.5px; background: var(--gold); }
-        .scale-line.mid { height: 12px; background: rgba(212, 175, 55, 0.6); }
+        /* 360度刻度层 - 使用百分比定位确保GitHub访问时渲染正常 */
+        .scale-layer { position: absolute; width: 100%; height: 100%; z-index: 4; top:0; left:0; }
+        .tick { 
+            position: absolute; top: 0; left: 50%; width: 1px; height: 8px; 
+            background: rgba(212, 175, 55, 0.4); 
+            transform-origin: 0 46vw; /* 这里的46vw对应容器宽度的一半 */
+        }
+        @media (min-width: 460px) { .tick { transform-origin: 0 230px; } } /* 对应max-width的一半 */
 
-        /* 文字层级微调 */
+        .tick.major { height: 16px; width: 1.5px; background: var(--gold); }
+        .tick.mid { height: 12px; background: rgba(212, 175, 55, 0.7); }
+
+        /* 文字层 */
         .d-layer { position: absolute; width: 100%; height: 100%; z-index: 10; }
-        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 16px; font-weight: 900; padding-top: 20px; color: #fff; text-shadow: 0 0 5px #000; }
+        .d-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 16px; font-weight: 900; padding-top: 22px; color: #fff; text-shadow: 0 0 5px #000; }
 
         .m-layer { position: absolute; width: 100%; height: 100%; z-index: 8; }
-        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 11px; font-weight: bold; padding-top: 55px; color: var(--gold); }
+        .m-text { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 12px; font-weight: bold; padding-top: 50px; color: var(--gold); }
 
-        .nine-grid { position: absolute; top: 28%; left: 28%; width: 44%; height: 44%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 20; background: rgba(0,0,0,0.6); }
+        .nine-grid { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); border: 1px solid var(--gold); z-index: 20; background: rgba(0,0,0,0.5); }
         .cell { border: 0.5px solid rgba(212,175,55,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .cell b { font-size: 11px; color: #fff; }
-        .cell small { font-size: 7px; transform: scale(0.9); color: #ccc; }
+        .cell b { font-size: 12px; color: #fff; }
+        .cell small { font-size: 8px; color: #ccc; }
         
-        .fire { color: var(--red) !important; }
-        .water { color: var(--water-blue) !important; }
-        .wood { color: var(--wood-green) !important; }
-        .metal { color: var(--metal-white) !important; }
-        .earth { color: var(--earth-yellow) !important; }
-
-        #start-btn { padding: 18px 45px; font-size: 1.3rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
-
-        .footer-sign { position: fixed; bottom: 15px; right: 20px; color: rgba(212, 175, 55, 0.5); font-size: 10px; z-index: 200; }
+        #start-btn { padding: 20px 50px; font-size: 1.5rem; background: var(--gold); color: #000; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
+        .footer-sign { position: fixed; bottom: 20px; right: 20px; color: rgba(212, 175, 55, 0.6); font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <button id="start-btn">开启精细罗盘</button>
+    <button id="start-btn">开启极准罗盘</button>
 
     <div id="info-box" style="display:none;">
         <p id="degree-val">0°</p>
@@ -89,7 +84,6 @@
             <div id="scale-box" class="scale-layer"></div>
             <div id="dir-box" class="d-layer"></div>
             <div id="mountains-box" class="m-layer"></div>
-            
             <div class="nine-grid">
                 <div class="cell"><b class="wood">巽四</b><small>木(长女)</small></div>
                 <div class="cell"><b class="fire">离九</b><small>火(中女)</small></div>
@@ -107,21 +101,18 @@
     <div class="footer-sign">dy：小茗同学</div>
 
     <script>
-        // 初始化360度刻度
+        // 动态生成刻度
         const scaleBox = document.getElementById('scale-box');
-        const radius = document.getElementById('ui').offsetWidth / 2;
         for (let i = 0; i < 360; i++) {
-            const line = document.createElement('div');
-            line.className = 'scale-line';
-            if (i % 10 === 0) line.classList.add('major');
-            else if (i % 2 === 0) line.classList.add('mid');
-            
-            line.style.transform = `rotate(${i}deg)`;
-            line.style.transformOrigin = `50% ${radius}px`;
-            scaleBox.appendChild(line);
+            const tick = document.createElement('div');
+            tick.className = 'tick';
+            if (i % 10 === 0) tick.classList.add('major');
+            else if (i % 2 === 0) tick.classList.add('mid');
+            tick.style.transform = `rotate(${i}deg)`;
+            scaleBox.appendChild(tick);
         }
 
-        // 初始化八向
+        // 初始化文字
         const dirs = ["南", "西南", "西", "西北", "北", "东北", "东", "东南"];
         const dirBox = document.getElementById('dir-box');
         dirs.forEach((t, i) => {
@@ -131,7 +122,6 @@
             dirBox.appendChild(d);
         });
 
-        // 初始化二十四山
         const ms = ["午","丁","未","坤","申","庚","酉","辛","戌","乾","亥","壬","子","癸","丑","艮","寅","甲","卯","乙","辰","巽","巳","丙"];
         const mtBox = document.getElementById('mountains-box');
         ms.forEach((t, i) => {
@@ -195,7 +185,7 @@
                     updateUI(h);
                 }, true);
             } else {
-                alert("浏览器不支持或未开启HTTPS环境");
+                alert("请在手机浏览器（建议Safari/Chrome）中打开，并确保使用HTTPS链接");
             }
         }
     </script>
